@@ -3,9 +3,10 @@ from bs4 import BeautifulSoup as BS #استخراج معلومات صفحة ال
 import pandas as pd #csv تحويل جوسون الى اكسل و
 from googletrans import Translator #ترجمت اسم الشركة وعدد الكيلو مترات من عربي الى انقليزي
 import json #للتعامل مع ملفات جوسون
+from datetime import datetime #لحساب وقت بداية البرنامج حتى نهايته
 
 print('''
-Version: 20.8.21
+Version: 20.8.22
 
     Developed by: Awiteb
     GitHub: Awiteb
@@ -17,7 +18,7 @@ jsonFileName = input("\n Enter name of json file: ").replace(".json" , '')
 excelFileName = input("\n Enter name of excel file: ").replace(".xls" , '')
 
 pageNumber = int(input("\n Enter number of pages: "))#اخذ رقم الصفحة المراد ايقاف جمع البيانات عندها
-
+StartProgram = datetime.now()# اخذ وقت بداية البرنامج
 fileJson = open(jsonFileName+'.json', 'w', encoding='utf8')#انشاء ملف جوسون للكتابة عليه
 fileJson.write('[\n')#كتابة بداية المصفوفة
 data = {}#انشاء دكشنري لحفظ البيانات
@@ -27,7 +28,6 @@ url = 'https://sa.opensooq.com/ar/%D8%AD%D8%B1%D8%A7%D8%AC-%D8%A7%D9%84%D8%B3%D9
 
 for page in range(pageNumber):
     page += 1#للبداية من صفحة رقم واحد وليس صفر والانتها عند الصفحة التي ادخلت رقمها
-    print(f" Total cars: {totalCar}")#طباعة مجموع السيارات التي تم جمعها
     urlAndPage = url + str(page)#اضافة رقم الصفحة الى الرابط
     print("---" , page , "---")#طباعة رقم الصفحة
     print(urlAndPage)#طباعة الرابط الذي سوف يتم استخراج البيانات منه
@@ -93,10 +93,13 @@ readJson.close()#اغلاق الجوسون بعد اخذ البينات
 editJson = stringJson.strip(',\n')#التعديل على البينات وازالة اخر فاصلة
 fileJson = open(jsonFileName+'.json', 'w', encoding='utf8')#فتح ملف الجوسون من جديد للكتابة
 fileJson.write(editJson + '\n]')#اضافة البيانات بعد تعديلها
-fileJson.close#اغلاق الملف
+fileJson.close()#اغلاق الملف
 print(f"\n\n Done save all data on {jsonFileName}.json")
 readJson = pd.read_json(f"{jsonFileName}.json")#قرأت ملف الجوسون بعد اغلاقه لتفادي المشاكل
 readJson.to_csv(f"{csvFileName}.csv")#(csv)تحويل ملف الجوسون الى
 print(f"\n\n Done save all data on {csvFileName}.csv")
 readJson.to_excel(f"{excelFileName}.xls")#(excel)تحويل ملف الجوسون الى
-print(f"\n\n Done save all data on {excelFileName}.xls")
+print(f"\n\n Done save all data on {excelFileName}.xls\n")
+endProgram = datetime.now()#اخذ وقت نهاية البرنامج
+durationExecution = str(endProgram - StartProgram)#طرح النهاية من البداية لينتج المدة التي استغرقها البرنامج 
+print("\nData of {totalCar} cars were taken in "+ durationExecution[0:7])
