@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import requests #استخراج معلومات صفحة الويب
 from bs4 import BeautifulSoup as BS #استخراج معلومات صفحة الويب
 import pandas as pd #csv تحويل جوسون الى اكسل و
@@ -6,20 +7,28 @@ import json #للتعامل مع ملفات جوسون
 from datetime import datetime #لحساب وقت بداية البرنامج حتى نهايته
 
 print('''
-Version: 20.8.22
+Version: 20.8.23
 
     Developed by: Awiteb
     GitHub: Awiteb
     Email: Awiteb@hotmail.com
 ''')
 "اخذ اسامي الملفات المراد حفظها"
-csvFileName = input(" Enter name of csv file: ").replace(".csv" , '')
-jsonFileName = input("\n Enter name of json file: ").replace(".json" , '')
-excelFileName = input("\n Enter name of excel file: ").replace(".xls" , '')
-
-pageNumber = int(input("\n Enter number of pages: "))#اخذ رقم الصفحة المراد ايقاف جمع البيانات عندها
+while True:
+    try:
+        jsonFileName = input("\n Enter name of json file: ").replace(".json" , '')
+        csvFileName = input(" Enter name of csv file: ").replace(".csv" , '')
+        excelFileName = input("\n Enter name of excel file: ").replace(".xls" , '')
+        pageNumber = int(input("\n Enter number of pages: "))#اخذ رقم الصفحة المراد ايقاف جمع البيانات عندها
+        fileJson = open(jsonFileName+'.json', 'w', encoding='utf8')#انشاء ملف جوسون للكتابة عليه
+        csvFile = open(csvFileName+'.csv', 'w', encoding='utf8')#انشاء ملف جوسون للكتابة عليه
+        excelFile = open(excelFileName+'.xls', 'w', encoding='utf8')#انشاء ملف جوسون للكتابة عليه
+        break
+    except ValueError:
+        print("Sorry, please enter the number of the page you want to stop collecting data, only an integer number..")
+    except FileNotFoundError as fileError:
+        print(fileError)
 StartProgram = datetime.now()# اخذ وقت بداية البرنامج
-fileJson = open(jsonFileName+'.json', 'w', encoding='utf8')#انشاء ملف جوسون للكتابة عليه
 fileJson.write('[\n')#كتابة بداية المصفوفة
 data = {}#انشاء دكشنري لحفظ البيانات
 
@@ -101,5 +110,7 @@ print(f"\n\n Done save all data on {csvFileName}.csv")
 readJson.to_excel(f"{excelFileName}.xls")#(excel)تحويل ملف الجوسون الى
 print(f"\n\n Done save all data on {excelFileName}.xls\n")
 endProgram = datetime.now()#اخذ وقت نهاية البرنامج
-durationExecution = str(endProgram - StartProgram)#طرح النهاية من البداية لينتج المدة التي استغرقها البرنامج 
-print("\nData of {totalCar} cars were taken in "+ durationExecution[0:7])
+durationExecution = str(endProgram - StartProgram)#طرح النهاية من البداية لينتج المدة التي استغرقها البرنامج
+csvFile.close()
+excelFile.close()
+print(f"Data of {totalCar} cars were taken in ({durationExecution[0:7]})\n")
